@@ -51,12 +51,11 @@ if (getToken()) {
     showDashboard();
 }
 
-// Login
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     loginError.textContent = '';
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
 
     try {
         const res = await fetch(`${API_BASE}/login`, {
@@ -64,9 +63,22 @@ loginForm.addEventListener('submit', async (e) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
-        const data = await res.json();
         
-        if (!res.ok) throw new Error(data.error || 'Login failed');
+        let data = {};
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            if (res.status === 404) {
+                throw new Error('API server unreachable (404 Not Found). Backend is deploying.');
+            }
+            throw new Error(`Server status ${res.status}: ${text || res.statusText}`);
+        }
+        
+        if (!res.ok) {
+            throw new Error(data.error || 'Invalid credentials');
+        }
         
         localStorage.setItem('token', data.token);
         showDashboard();

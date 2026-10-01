@@ -2,9 +2,23 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 
-const dataFile = path.join(__dirname, 'kashmira_data.json');
+const bundledDataFile = path.join(__dirname, 'kashmira_data.json');
+const tmpDataFile = path.join('/tmp', 'kashmira_data.json');
+
+function getDataFilePath() {
+  if (process.env.VERCEL) {
+    if (!fs.existsSync(tmpDataFile) && fs.existsSync(bundledDataFile)) {
+      try {
+        fs.copyFileSync(bundledDataFile, tmpDataFile);
+      } catch (e) {}
+    }
+    return fs.existsSync(tmpDataFile) ? tmpDataFile : bundledDataFile;
+  }
+  return bundledDataFile;
+}
 
 function loadData() {
+  const dataFile = getDataFilePath();
   if (!fs.existsSync(dataFile)) {
     const initialData = {
       users: [
@@ -52,13 +66,37 @@ function loadData() {
           created_at: new Date().toISOString()
         }
       ],
+      karaoke: {
+        title: 'Karaoke Nights',
+        schedule: 'Every Friday • 8 PM onwards',
+        venue: 'The Melody Lounge, Mumbai',
+        btn_text: 'Reserve a Spot',
+        btn_link: '#contact',
+        enabled: true
+      },
       nextShowId: 5
     };
-    fs.writeFileSync(dataFile, JSON.stringify(initialData, null, 2));
+    try {
+      fs.writeFileSync(dataFile, JSON.stringify(initialData, null, 2));
+    } catch (_) {}
     return initialData;
   }
+
   try {
     const parsed = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    let changed = false;
+
+    if (!parsed.users || !parsed.users.some(u => u.username === 'kashmirakhot')) {
+      parsed.users = [
+        {
+          id: 1,
+          username: 'kashmirakhot',
+          password_hash: bcrypt.hashSync('kash@ford1969', 10)
+        }
+      ];
+      changed = true;
+    }
+
     if (!parsed.karaoke) {
       parsed.karaoke = {
         title: 'Karaoke Nights',
@@ -68,17 +106,40 @@ function loadData() {
         btn_link: '#contact',
         enabled: true
       };
+      changed = true;
+    }
+
+    if (changed) {
       saveData(parsed);
     }
     return parsed;
   } catch (err) {
-    console.error('Error reading data file, reinitializing', err);
-    return { users: [], shows: [], nextShowId: 1 };
+    console.error('Error reading data file, using fallback', err);
+    return {
+      users: [
+        {
+          id: 1,
+          username: 'kashmirakhot',
+          password_hash: bcrypt.hashSync('kash@ford1969', 10)
+        }
+      ],
+      shows: [],
+      nextShowId: 1
+    };
   }
 }
 
 function saveData(data) {
-  fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
+  const dataFile = getDataFilePath();
+  try {
+    fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
+  } catch (err) {
+    try {
+      fs.writeFileSync(tmpDataFile, JSON.stringify(data, null, 2));
+    } catch (e) {
+      console.error('Failed to write data to /tmp', e);
+    }
+  }
 }
 
 // Initialize file on startup

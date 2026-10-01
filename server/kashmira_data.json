@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2a$10$sgGWTs1KNqa1WjKJt2VJzOt4W.oxz239ltS0T0pKj7UOZ.zAGddE2"
+    }
+  ],
+  "shows": [
+    {
+      "id": 1,
+      "date": "2026-10-15",
+      "venue": "The Blue Room",
+      "city": "Mumbai, India",
+      "ticket_url": "#contact",
+      "type": "show",
+      "created_at": "2026-09-30T10:13:01.801Z"
+    },
+    {
+      "id": 2,
+      "date": "2026-11-02",
+      "venue": "Underground Cafe",
+      "city": "Pune, India",
+      "ticket_url": "#contact",
+      "type": "show",
+      "created_at": "2026-09-30T10:13:01.805Z"
+    },
+    {
+      "id": 3,
+      "date": "2026-12-12",
+      "venue": "Rhythm Festival",
+      "city": "Goa, India",
+      "ticket_url": "#contact",
+      "type": "show",
+      "created_at": "2026-09-30T10:13:01.805Z"
+    },
+    {
+      "id": 4,
+      "date": "2026-10-23",
+      "venue": "The Melody Lounge",
+      "city": "Mumbai, India",
+      "ticket_url": "#contact",
+      "type": "karaoke",
+      "created_at": "2026-09-30T10:13:01.805Z"
+    }
+  ],
+  "karaoke": {
+    "title": "Karaoke Nights",
+    "schedule": "Every Friday • 8 PM onwards",
+    "venue": "The Melody Lounge, Mumbai",
+    "btn_text": "Reserve a Spot",
+    "btn_link": "#contact",
+    "enabled": true
+  },
+  "nextShowId": 5
+}

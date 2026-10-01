@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KASHMIRA — Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+        <div class="login-card">
+            <h1>KASHMIRA<br><span>Admin Access</span></h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+                <p id="login-error" class="error-msg"></p>
+                <p class="hint">Hint: admin / kashmira2026</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard-screen" class="screen hidden">
+        <header class="dashboard-header">
+            <h2>KASHMIRA — Admin</h2>
+            <button id="logout-btn" class="btn-secondary">Logout</button>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- Karaoke Nights Spotlight Section -->
+            <section class="admin-card karaoke-spotlight-card">
+                <div class="card-header-row">
+                    <div>
+                        <span class="badge-tag">Spotlight Feature</span>
+                        <h3>🎤 Karaoke Nights Spotlight</h3>
+                        <p class="card-desc">Configure the highlighted Karaoke card shown in the Live Shows section of the website.</p>
+                    </div>
+                    <button id="edit-karaoke-btn" class="btn-primary edit-karaoke-action">Edit Karaoke Nights</button>
+                </div>
+                <div class="karaoke-preview-grid">
+                    <div class="preview-tile">
+                        <span class="tile-label">Status</span>
+                        <span class="tile-val" id="prev-k-status"><span class="status-badge active">Active / Visible</span></span>
+                    </div>
+                    <div class="preview-tile">
+                        <span class="tile-label">Title</span>
+                        <span class="tile-val" id="prev-k-title">Karaoke Nights</span>
+                    </div>
+                    <div class="preview-tile">
+                        <span class="tile-label">Schedule</span>
+                        <span class="tile-val" id="prev-k-schedule">Every Friday • 8 PM onwards</span>
+                    </div>
+                    <div class="preview-tile">
+                        <span class="tile-label">Venue</span>
+                        <span class="tile-val" id="prev-k-venue">The Melody Lounge, Mumbai</span>
+                    </div>
+                    <div class="preview-tile">
+                        <span class="tile-label">Button</span>
+                        <span class="tile-val" id="prev-k-btn">Reserve a Spot (<code>#contact</code>)</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="dashboard-section-header">
+                <h3>Live Shows Schedule</h3>
+                <button id="add-show-btn" class="btn-primary">+ Add New Show</button>
+            </div>
+
+            <div class="table-container">
+                <table id="shows-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Venue</th>
+                            <th>City</th>
+                            <th>Type</th>
+                            <th>Ticket URL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shows-tbody">
+                        <!-- Rows will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="show-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">Add Show</h3>
+            <form id="show-form">
+                <input type="hidden" id="show-id">
+                <div class="form-group">
+                    <label for="show-date">Date</label>
+                    <input type="date" id="show-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="show-venue">Venue</label>
+                    <input type="text" id="show-venue" required>
+                </div>
+                <div class="form-group">
+                    <label for="show-city">City</label>
+                    <input type="text" id="show-city" required>
+                </div>
+                <div class="form-group">
+                    <label for="show-type">Type</label>
+                    <select id="show-type">
+                        <option value="show">Live Show</option>
+                        <option value="karaoke">Karaoke Event</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="show-url">Ticket URL</label>
+                    <input type="url" id="show-url">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-modal" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Karaoke Modal -->
+    <div id="karaoke-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Edit Karaoke Nights</h3>
+            <form id="karaoke-form">
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="karaoke-enabled" checked>
+                        <span>Show Karaoke Spotlight on website</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="karaoke-title">Title</label>
+                    <input type="text" id="karaoke-title" required placeholder="e.g. Karaoke Nights">
+                </div>
+                <div class="form-group">
+                    <label for="karaoke-schedule">Schedule / Time</label>
+                    <input type="text" id="karaoke-schedule" required placeholder="e.g. Every Friday • 8 PM onwards">
+                </div>
+                <div class="form-group">
+                    <label for="karaoke-venue">Venue &amp; City</label>
+                    <input type="text" id="karaoke-venue" required placeholder="e.g. The Melody Lounge, Mumbai">
+                </div>
+                <div class="form-group">
+                    <label for="karaoke-btn-text">Button Text</label>
+                    <input type="text" id="karaoke-btn-text" placeholder="e.g. Reserve a Spot">
+                </div>
+                <div class="form-group">
+                    <label for="karaoke-btn-link">Button Link (URL or #contact)</label>
+                    <input type="text" id="karaoke-btn-link" placeholder="e.g. #contact or https://...">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-karaoke-modal" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Karaoke Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

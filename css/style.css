@@ -1175,32 +1175,37 @@ a {
 .footer-qolabr {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  flex-direction: row;
+  gap: 5px;
   text-decoration: none;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  letter-spacing: 0.05em;
-  opacity: 0.85;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
   transition: opacity 0.3s ease, color 0.3s ease;
   flex: 1;
   justify-content: flex-start;
+  white-space: nowrap;
 }
 
 .footer-qolabr:hover {
-  opacity: 1;
-  color: #fff;
+  opacity: 0.95;
+  color: var(--color-tidal);
 }
 
 .footer-qolabr .qolabr-logo-icon {
-  width: 17px;
-  height: 17px;
-  display: block;
-  transition: transform 0.3s ease;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .footer-qolabr:hover .qolabr-logo-icon {
-  transform: scale(1.12);
+  transform: scale(1.15);
 }
 
 .footer-copyright {

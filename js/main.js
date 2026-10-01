@@ -1,56 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Navbar Scroll Effect
-    const navbar = document.getElementById('navbar');
-    let ticking = false;
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                if (navbar) {
-                    if (window.scrollY > 80) {
-                        navbar.classList.add('nav-scrolled');
-                    } else {
-                        navbar.classList.remove('nav-scrolled');
-                    }
-                }
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-
-    // 2. Mobile Nav Toggle
-    const navToggle = document.querySelector('.nav-toggle');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', () => {
-            navToggle.classList.toggle('active');
-            navLinks.classList.toggle('active');
-        });
-
-        const links = navLinks.querySelectorAll('a');
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                navToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
-        });
-    }
-
-    // 3. Smooth Scroll
+    // 1. Smooth Scroll for Anchor Links
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
-    const navHeight = 70; // Offset for navbar
 
     anchorLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             const targetId = link.getAttribute('href');
-            if (targetId === '#') return;
+            if (!targetId || targetId === '#') return;
 
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
                 e.preventDefault();
-                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
                 window.scrollTo({
                     top: targetPosition,
                     behavior: 'smooth'
@@ -59,61 +19,88 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. Releases Horizontal Pinned Scroll
+    // 2. High-Performance RAF Scroll Controller
+    // Unifies horizontal pinned scroll and scroll indicator without layout thrashing
     const releasesWrapper = document.querySelector('.releases-horizontal-wrapper');
     const releasesTrack = document.getElementById('releases-track');
     const releasesProgressBar = document.getElementById('releases-progress-bar');
     const releasesCurrentNum = document.getElementById('releases-current-num');
     const releasesTotalNum = document.getElementById('releases-total-num');
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+
+    let cards = [];
+    let isTicking = false;
+    let scrollDistance = 0;
+    let trackTravel = 0;
 
     if (releasesWrapper && releasesTrack) {
-        const cards = releasesTrack.querySelectorAll('.album-card');
+        cards = releasesTrack.querySelectorAll('.album-card');
         if (releasesTotalNum && cards.length > 0) {
             releasesTotalNum.textContent = String(cards.length).padStart(2, '0');
         }
+    }
 
-        const handleHorizontalScroll = () => {
+    const cacheDimensions = () => {
+        if (releasesWrapper && releasesTrack) {
+            scrollDistance = Math.max(0, releasesWrapper.offsetHeight - window.innerHeight);
+            const trackWidth = releasesTrack.scrollWidth;
+            const viewportWidth = window.innerWidth;
+            trackTravel = Math.max(0, trackWidth - viewportWidth + (viewportWidth * 0.08));
+        }
+    };
+
+    const updateScrollState = () => {
+        // Horizontal Track Update
+        if (releasesWrapper && releasesTrack && scrollDistance > 0) {
             const wrapperRect = releasesWrapper.getBoundingClientRect();
-            const scrollDistance = releasesWrapper.offsetHeight - window.innerHeight;
-            if (scrollDistance <= 0) return;
-
             const scrolledAmount = -wrapperRect.top;
             const progress = Math.max(0, Math.min(1, scrolledAmount / scrollDistance));
 
-            // Calculate track travel distance
-            const trackWidth = releasesTrack.scrollWidth;
-            const viewportWidth = window.innerWidth;
-            const totalTravel = Math.max(0, trackWidth - viewportWidth + (viewportWidth * 0.08));
+            releasesTrack.style.transform = `translate3d(-${(progress * trackTravel).toFixed(2)}px, 0, 0)`;
 
-            // Translate track horizontally
-            releasesTrack.style.transform = `translateX(-${progress * totalTravel}px)`;
-
-            // Update Progress Bar width
             if (releasesProgressBar) {
                 const barWidth = Math.max(8, progress * 100);
                 releasesProgressBar.style.width = `${barWidth}%`;
             }
 
-            // Update Album Counter (e.g. 01, 02, 03, 04)
             if (releasesCurrentNum && cards.length > 0) {
                 const activeIndex = Math.min(cards.length, Math.floor(progress * cards.length) + 1);
                 releasesCurrentNum.textContent = String(activeIndex).padStart(2, '0');
             }
-        };
+        }
 
-        window.addEventListener('scroll', () => {
-            window.requestAnimationFrame(handleHorizontalScroll);
-        }, { passive: true });
+        // Scroll Indicator Opacity
+        if (scrollIndicator) {
+            if (window.scrollY > 150) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.pointerEvents = 'none';
+            } else {
+                scrollIndicator.style.opacity = '1';
+                scrollIndicator.style.pointerEvents = 'auto';
+            }
+        }
 
-        window.addEventListener('resize', () => {
-            window.requestAnimationFrame(handleHorizontalScroll);
-        });
+        isTicking = false;
+    };
 
-        // Initialize state
-        handleHorizontalScroll();
-    }
+    const onScroll = () => {
+        if (!isTicking) {
+            requestAnimationFrame(updateScrollState);
+            isTicking = true;
+        }
+    };
 
-    // 5. Scroll Reveal (Fade-in Animation)
+    // Cache initial dimensions and run initial frame
+    cacheDimensions();
+    updateScrollState();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+        cacheDimensions();
+        onScroll();
+    }, { passive: true });
+
+    // 3. Scroll Reveal (Fade-in Animation)
     const fadeElements = document.querySelectorAll('.fade-in');
     
     if ('IntersectionObserver' in window) {
@@ -128,11 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fadeElements.forEach(el => revealObserver.observe(el));
     } else {
-        // Fallback for older browsers
         fadeElements.forEach(el => el.classList.add('visible'));
     }
 
-    // 5. Gallery Tab Switching
+    // 4. Gallery Tab Switching (Photos / Videos)
     const galleryTabs = document.querySelectorAll('.gallery-tab');
     const videoGrid = document.getElementById('gallery-videos');
     const photoGrid = document.getElementById('gallery-photos');
@@ -156,12 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 6. Photo Lightbox
+    // 5. Media Lightbox (Photos & High-Definition Video Player)
     const galleryPhotos = document.querySelectorAll('.gallery-photo');
+    const galleryVideos = document.querySelectorAll('.gallery-video');
     const lightbox = document.getElementById('lightbox');
     
     if (lightbox) {
         const contentBox = lightbox.querySelector('.lightbox-content');
+        const lightboxClose = lightbox.querySelector('.lightbox-close');
 
         const openLightbox = (imgSrc) => {
             if (contentBox) contentBox.innerHTML = `<img src="${imgSrc}" alt="Gallery photo">`;
@@ -172,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const openLightboxVideo = (videoSrc, title, venue) => {
             if (contentBox) {
                 contentBox.innerHTML = `
-                    <video src="${videoSrc}" controls autoplay playsinline></video>
+                    <video src="${videoSrc}" controls autoplay playsinline preload="auto"></video>
                     ${title ? `
                         <div class="lightbox-caption">
                             <h4>${title}</h4>
@@ -205,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        const galleryVideos = document.querySelectorAll('.gallery-video');
         galleryVideos.forEach(vidItem => {
             vidItem.addEventListener('click', () => {
                 const videoSrc = vidItem.getAttribute('data-video');
@@ -234,52 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 7. Active Nav Link Highlight
-    const sections = document.querySelectorAll('section[id]');
-    
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    if (window.scrollY >= (sectionTop - navHeight - 100)) {
-                        current = section.getAttribute('id');
-                    }
-                });
-
-                if (navLinks) {
-                    const links = navLinks.querySelectorAll('a');
-                    links.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${current}`) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            });
-        }
-    }, { passive: true });
-
-    // 8. Scroll Indicator Hide
-    const scrollIndicator = document.querySelector('.scroll-indicator');
-    
-    if (scrollIndicator) {
-        window.addEventListener('scroll', () => {
-            window.requestAnimationFrame(() => {
-                if (window.scrollY > 200) {
-                    scrollIndicator.style.opacity = '0';
-                    scrollIndicator.style.pointerEvents = 'none';
-                } else {
-                    scrollIndicator.style.opacity = '1';
-                    scrollIndicator.style.pointerEvents = 'auto';
-                }
-            });
-        }, { passive: true });
-    }
-
-    // 9. Dynamic Live Shows Fetcher from Backend
+    // 6. Dynamic Live Shows Fetcher from Backend
     const showsList = document.getElementById('shows-list');
     if (showsList) {
         const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
@@ -329,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // 10. Dynamic Karaoke Fetcher from Backend
+    // 7. Dynamic Karaoke Fetcher from Backend
     const karaokeCard = document.getElementById('karaoke-card');
     if (karaokeCard) {
         fetch('/api/karaoke')
@@ -368,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(() => {
-                // Fallback: keep static default
+                // Keep default static karaoke in HTML as fallback
             });
     }
 });

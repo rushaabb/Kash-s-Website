@@ -2,8 +2,8 @@
   "users": [
     {
       "id": 1,
-      "username": "admin",
-      "password_hash": "$2a$10$sgGWTs1KNqa1WjKJt2VJzOt4W.oxz239ltS0T0pKj7UOZ.zAGddE2"
+      "username": "kashmirakhot",
+      "password_hash": "$2a$10$6f3DySgjLXsDym4hUtXqQejjj1yUG/r.uEOGjKENv/iyWtoeeQafS"
     }
   ],
   "shows": [

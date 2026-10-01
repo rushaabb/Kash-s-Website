@@ -10,8 +10,8 @@ function loadData() {
       users: [
         {
           id: 1,
-          username: 'admin',
-          password_hash: bcrypt.hashSync('kashmira2026', 10)
+          username: 'kashmirakhot',
+          password_hash: bcrypt.hashSync('kash@ford1969', 10)
         }
       ],
       shows: [

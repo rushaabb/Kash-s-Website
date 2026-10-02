@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'kashmira-secret-key-2026';
 
-app.use(cors({ origin: ['http://localhost:3000', 'http://127.0.0.1:3000'], credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -32,18 +32,18 @@ const authMiddleware = (req, res, next) => {
 };
 
 // API Routes
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
 
-  const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+  const user = await db.getUser(username);
   if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
   const match = bcrypt.compareSync(password, user.password_hash);
   if (!match) return res.status(401).json({ error: 'Invalid credentials' });
 
-  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1d' });
-  res.cookie('token', token, { httpOnly: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
+  res.cookie('token', token, { httpOnly: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 });
   res.json({ token });
 });
 
@@ -52,45 +52,42 @@ app.post('/api/logout', (req, res) => {
   res.json({ message: 'Logged out' });
 });
 
-// Shows API
-app.get('/api/shows', (req, res) => {
+// Shows API (no-cache headers to ensure immediate reflection on all devices)
+app.get('/api/shows', async (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   try {
-    const shows = db.prepare('SELECT * FROM shows ORDER BY date ASC').all();
+    const shows = await db.getShows();
     res.json(shows);
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
   }
 });
 
-app.post('/api/shows', authMiddleware, (req, res) => {
+app.post('/api/shows', authMiddleware, async (req, res) => {
   const { date, venue, city, ticket_url, type } = req.body;
   try {
-    const info = db.prepare(`
-      INSERT INTO shows (date, venue, city, ticket_url, type) 
-      VALUES (?, ?, ?, ?, ?)
-    `).run(date, venue, city, ticket_url || '', type || 'show');
-    res.status(201).json({ id: info.lastInsertRowid, date, venue, city, ticket_url, type });
+    const newShow = await db.addShow({ date, venue, city, ticket_url, type });
+    res.status(201).json(newShow);
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
   }
 });
 
-app.put('/api/shows/:id', authMiddleware, (req, res) => {
+app.put('/api/shows/:id', authMiddleware, async (req, res) => {
   const { date, venue, city, ticket_url, type } = req.body;
   try {
-    db.prepare(`
-      UPDATE shows SET date = ?, venue = ?, city = ?, ticket_url = ?, type = ?
-      WHERE id = ?
-    `).run(date, venue, city, ticket_url || '', type || 'show', req.params.id);
-    res.json({ message: 'Updated' });
+    const updated = await db.updateShow(req.params.id, { date, venue, city, ticket_url, type });
+    if (!updated) return res.status(404).json({ error: 'Show not found' });
+    res.json({ message: 'Updated', show: updated });
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
   }
 });
 
-app.delete('/api/shows/:id', authMiddleware, (req, res) => {
+app.delete('/api/shows/:id', authMiddleware, async (req, res) => {
   try {
-    db.prepare('DELETE FROM shows WHERE id = ?').run(req.params.id);
+    const deleted = await db.deleteShow(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Show not found' });
     res.json({ message: 'Deleted' });
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
@@ -98,23 +95,32 @@ app.delete('/api/shows/:id', authMiddleware, (req, res) => {
 });
 
 // Karaoke API
-app.get('/api/karaoke', (req, res) => {
+app.get('/api/karaoke', async (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   try {
-    const karaoke = db.getKaraoke();
+    const karaoke = await db.getKaraoke();
     res.json(karaoke);
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
   }
 });
 
-app.put('/api/karaoke', authMiddleware, (req, res) => {
+app.put('/api/karaoke', authMiddleware, async (req, res) => {
   try {
     const { title, schedule, venue, btn_text, btn_link, enabled } = req.body;
-    const updated = db.updateKaraoke({ title, schedule, venue, btn_text, btn_link, enabled });
+    const updated = await db.updateKaraoke({ title, schedule, venue, btn_text, btn_link, enabled });
     res.json({ message: 'Karaoke settings updated', karaoke: updated });
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
   }
+});
+
+// Storage and Connection Status API
+app.get('/api/status', (req, res) => {
+  res.json({
+    is_kv_connected: db.isKvConnected(),
+    storage: db.isKvConnected() ? 'vercel-kv' : 'local-ephemeral'
+  });
 });
 
 // Admin fallback

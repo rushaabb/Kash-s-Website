@@ -173,9 +173,63 @@ input:focus, select:focus {
     letter-spacing: 1px;
 }
 
+.storage-badge {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.storage-badge.connected {
+    color: #4ade80;
+}
+
+.storage-badge.ephemeral {
+    color: #fbbf24;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .dashboard-header .btn-secondary {
     width: auto;
     padding: 0.5rem 1rem;
+}
+
+.sync-banner {
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+}
+
+.sync-banner-content {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.sync-banner-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.sync-banner strong {
+    color: #fbbf24;
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.sync-banner p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .dashboard-main {

@@ -5,6 +5,9 @@ const bcrypt = require('bcryptjs');
 const bundledDataFile = path.join(__dirname, 'kashmira_data.json');
 const tmpDataFile = path.join('/tmp', 'kashmira_data.json');
 
+const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
 function getDataFilePath() {
   if (process.env.VERCEL) {
     if (!fs.existsSync(tmpDataFile) && fs.existsSync(bundledDataFile)) {
@@ -17,7 +20,45 @@ function getDataFilePath() {
   return bundledDataFile;
 }
 
-function loadData() {
+let memCache = null;
+
+async function getKvData() {
+  if (!KV_URL || !KV_TOKEN) return null;
+  try {
+    const res = await fetch(`${KV_URL}/get/kashmira_data`, {
+      headers: { Authorization: `Bearer ${KV_TOKEN}` },
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json && json.result) {
+      return typeof json.result === 'string' ? JSON.parse(json.result) : json.result;
+    }
+  } catch (err) {
+    console.error('Vercel KV fetch error:', err);
+  }
+  return null;
+}
+
+async function setKvData(data) {
+  if (!KV_URL || !KV_TOKEN) return false;
+  try {
+    const res = await fetch(`${KV_URL}/set/kashmira_data`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${KV_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(JSON.stringify(data))
+    });
+    return res.ok;
+  } catch (err) {
+    console.error('Vercel KV set error:', err);
+    return false;
+  }
+}
+
+function loadLocalData() {
   const dataFile = getDataFilePath();
   if (!fs.existsSync(dataFile)) {
     const initialData = {
@@ -110,7 +151,7 @@ function loadData() {
     }
 
     if (changed) {
-      saveData(parsed);
+      saveLocalData(parsed);
     }
     return parsed;
   } catch (err) {
@@ -129,7 +170,8 @@ function loadData() {
   }
 }
 
-function saveData(data) {
+function saveLocalData(data) {
+  memCache = data;
   const dataFile = getDataFilePath();
   try {
     fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
@@ -142,15 +184,112 @@ function saveData(data) {
   }
 }
 
-// Initialize file on startup
-loadData();
+async function loadData() {
+  const kvData = await getKvData();
+  if (kvData) {
+    memCache = kvData;
+    return kvData;
+  }
+  if (memCache) return memCache;
+  const local = loadLocalData();
+  memCache = local;
+  return local;
+}
+
+async function saveData(data) {
+  memCache = data;
+  saveLocalData(data);
+  await setKvData(data);
+}
+
+// Ensure initial state
+loadLocalData();
 
 const db = {
+  isKvConnected() {
+    return Boolean(KV_URL && KV_TOKEN);
+  },
+  async getUser(username) {
+    const data = await loadData();
+    return data.users.find(u => u.username === username);
+  },
+  async getShows() {
+    const data = await loadData();
+    return [...data.shows].sort((a, b) => (a.date > b.date ? 1 : -1));
+  },
+  async addShow({ date, venue, city, ticket_url, type }) {
+    const data = await loadData();
+    const newShow = {
+      id: data.nextShowId++,
+      date: date || '',
+      venue: venue || '',
+      city: city || '',
+      ticket_url: ticket_url || '',
+      type: type || 'show',
+      created_at: new Date().toISOString()
+    };
+    data.shows.push(newShow);
+    await saveData(data);
+    return newShow;
+  },
+  async updateShow(id, { date, venue, city, ticket_url, type }) {
+    const data = await loadData();
+    const numId = parseInt(id, 10);
+    const show = data.shows.find(s => s.id === numId);
+    if (show) {
+      show.date = date;
+      show.venue = venue;
+      show.city = city;
+      show.ticket_url = ticket_url || '';
+      show.type = type || 'show';
+      await saveData(data);
+      return show;
+    }
+    return null;
+  },
+  async deleteShow(id) {
+    const data = await loadData();
+    const numId = parseInt(id, 10);
+    const idx = data.shows.findIndex(s => s.id === numId);
+    if (idx !== -1) {
+      data.shows.splice(idx, 1);
+      await saveData(data);
+      return true;
+    }
+    return false;
+  },
+  async getKaraoke() {
+    const data = await loadData();
+    return data.karaoke || {
+      title: 'Karaoke Nights',
+      schedule: 'Every Friday • 8 PM onwards',
+      venue: 'The Melody Lounge, Mumbai',
+      btn_text: 'Reserve a Spot',
+      btn_link: '#contact',
+      enabled: true
+    };
+  },
+  async updateKaraoke(updates) {
+    const data = await loadData();
+    if (!data.karaoke) {
+      data.karaoke = {};
+    }
+    if (updates.title !== undefined) data.karaoke.title = updates.title;
+    if (updates.schedule !== undefined) data.karaoke.schedule = updates.schedule;
+    if (updates.venue !== undefined) data.karaoke.venue = updates.venue;
+    if (updates.btn_text !== undefined) data.karaoke.btn_text = updates.btn_text;
+    if (updates.btn_link !== undefined) data.karaoke.btn_link = updates.btn_link;
+    if (updates.enabled !== undefined) data.karaoke.enabled = Boolean(updates.enabled);
+
+    await saveData(data);
+    return data.karaoke;
+  },
+  // Synchronous fallback adapter for existing code
   prepare(sql) {
     const normalized = sql.trim().toUpperCase();
     return {
       get(...params) {
-        const data = loadData();
+        const data = memCache || loadLocalData();
         if (normalized.includes('FROM USERS WHERE USERNAME =')) {
           const username = params[0];
           return data.users.find(u => u.username === username);
@@ -161,14 +300,14 @@ const db = {
         return null;
       },
       all(...params) {
-        const data = loadData();
+        const data = memCache || loadLocalData();
         if (normalized.includes('FROM SHOWS')) {
           return [...data.shows].sort((a, b) => (a.date > b.date ? 1 : -1));
         }
         return [];
       },
       run(...params) {
-        const data = loadData();
+        const data = memCache || loadLocalData();
         if (normalized.startsWith('INSERT INTO SHOWS')) {
           const [date, venue, city, ticket_url, type] = params;
           const newShow = {
@@ -211,32 +350,6 @@ const db = {
         return { changes: 0 };
       }
     };
-  },
-  getKaraoke() {
-    const data = loadData();
-    return data.karaoke || {
-      title: 'Karaoke Nights',
-      schedule: 'Every Friday • 8 PM onwards',
-      venue: 'The Melody Lounge, Mumbai',
-      btn_text: 'Reserve a Spot',
-      btn_link: '#contact',
-      enabled: true
-    };
-  },
-  updateKaraoke(updates) {
-    const data = loadData();
-    if (!data.karaoke) {
-      data.karaoke = {};
-    }
-    if (updates.title !== undefined) data.karaoke.title = updates.title;
-    if (updates.schedule !== undefined) data.karaoke.schedule = updates.schedule;
-    if (updates.venue !== undefined) data.karaoke.venue = updates.venue;
-    if (updates.btn_text !== undefined) data.karaoke.btn_text = updates.btn_text;
-    if (updates.btn_link !== undefined) data.karaoke.btn_link = updates.btn_link;
-    if (updates.enabled !== undefined) data.karaoke.enabled = Boolean(updates.enabled);
-
-    saveData(data);
-    return data.karaoke;
   }
 };
 

@@ -33,11 +33,28 @@
     <!-- Dashboard Screen -->
     <div id="dashboard-screen" class="screen hidden">
         <header class="dashboard-header">
-            <h2>KASHMIRA — Admin</h2>
-            <button id="logout-btn" class="btn-secondary">Logout</button>
+            <div>
+                <h2>KASHMIRA — Admin</h2>
+                <div id="storage-status-badge" class="storage-badge">Checking sync status...</div>
+            </div>
+            <div class="header-actions">
+                <button id="export-data-btn" class="btn-secondary">Export Data</button>
+                <button id="logout-btn" class="btn-secondary">Logout</button>
+            </div>
         </header>
 
         <main class="dashboard-main">
+            <!-- Sync Guide Banner (shown only when KV is not connected) -->
+            <div id="sync-guide-banner" class="sync-banner hidden">
+                <div class="sync-banner-content">
+                    <span class="sync-banner-icon">⚡</span>
+                    <div>
+                        <strong>Multi-Device Live Sync Tip:</strong>
+                        <p>Because Vercel serverless containers are ephemeral, connect a free database in <strong>Vercel Dashboard &rarr; Storage &rarr; Create KV Database</strong> to have edits update across all devices instantly without re-deploying. You can also click <strong>Export Data</strong> above anytime to save your edits.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Karaoke Nights Spotlight Section -->
             <section class="admin-card karaoke-spotlight-card">
                 <div class="card-header-row">

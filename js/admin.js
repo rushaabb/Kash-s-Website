@@ -102,9 +102,62 @@ function showLogin() {
     loginForm.reset();
 }
 
+const storageBadge = document.getElementById('storage-status-badge');
+const syncBanner = document.getElementById('sync-guide-banner');
+const exportBtn = document.getElementById('export-data-btn');
+
+async function checkStorageStatus() {
+    try {
+        const res = await fetch(`${API_BASE}/status?_t=${Date.now()}`);
+        if (!res.ok) return;
+        const status = await res.json();
+        if (storageBadge) {
+            if (status.is_kv_connected) {
+                storageBadge.innerHTML = '🟢 Cloud Synced (Updates all devices live)';
+                storageBadge.className = 'storage-badge connected';
+                if (syncBanner) syncBanner.classList.add('hidden');
+            } else {
+                storageBadge.innerHTML = '🟠 Ephemeral Mode (Connect Vercel KV for multi-device sync)';
+                storageBadge.className = 'storage-badge ephemeral';
+                if (syncBanner) syncBanner.classList.remove('hidden');
+            }
+        }
+    } catch (e) {}
+}
+
+if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+        try {
+            const [showsRes, karaokeRes] = await Promise.all([
+                fetch(`${API_BASE}/shows?_t=${Date.now()}`),
+                fetch(`${API_BASE}/karaoke?_t=${Date.now()}`)
+            ]);
+            const shows = await showsRes.json();
+            const karaoke = await karaokeRes.json();
+            
+            const exportPayload = {
+                shows: shows,
+                karaoke: karaoke,
+                exported_at: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kashmira_data_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert('Failed to export data: ' + err.message);
+        }
+    });
+}
+
 function showDashboard() {
     loginScreen.classList.add('hidden');
     dashboardScreen.classList.remove('hidden');
+    checkStorageStatus();
     fetchShows();
     fetchKaraoke();
 }
@@ -112,7 +165,7 @@ function showDashboard() {
 // Fetch Karaoke
 async function fetchKaraoke() {
     try {
-        const res = await fetch(`${API_BASE}/karaoke`);
+        const res = await fetch(`${API_BASE}/karaoke?_t=${Date.now()}`);
         const karaoke = await res.json();
         currentKaraoke = karaoke;
         renderKaraoke(karaoke);
@@ -141,7 +194,7 @@ function renderKaraoke(k) {
 // Fetch Shows
 async function fetchShows() {
     try {
-        const res = await fetch(`${API_BASE}/shows`);
+        const res = await fetch(`${API_BASE}/shows?_t=${Date.now()}`);
         const shows = await res.json();
         renderShows(shows);
     } catch (err) {

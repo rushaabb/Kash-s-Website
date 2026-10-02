@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (showsList) {
         const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
         
-        fetch('/api/shows')
+        fetch(`/api/shows?_t=${Date.now()}`)
             .then(res => {
                 if (!res.ok) throw new Error('API unreachable');
                 return res.json();
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7. Dynamic Karaoke Fetcher from Backend
     const karaokeCard = document.getElementById('karaoke-card');
     if (karaokeCard) {
-        fetch('/api/karaoke')
+        fetch(`/api/karaoke?_t=${Date.now()}`)
             .then(res => {
                 if (!res.ok) throw new Error('Karaoke API unreachable');
                 return res.json();

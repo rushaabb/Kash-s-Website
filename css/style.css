@@ -645,20 +645,35 @@ a {
   }
 }
 
-/* Music Classes */
+/* Music Classes — Compact & Focused */
+#classes {
+  padding: 65px 20px;
+}
+
+#classes .section-header {
+  margin-bottom: 35px;
+}
+
+#classes .section-title {
+  font-size: 1.65rem;
+}
+
 .classes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  max-width: 440px;
   margin: 0 auto;
+}
+
+.classes-grid .class-card {
+  width: 100%;
 }
 
 .class-card {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 8px;
-  padding: 40px 30px;
+  padding: 30px 24px;
   text-align: center;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
@@ -666,34 +681,33 @@ a {
 
 .class-card:hover {
   border-color: var(--color-tidal);
-  transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(95, 0, 50, 0.4), 0 0 15px rgba(232, 249, 162, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(95, 0, 50, 0.4), 0 0 15px rgba(232, 249, 162, 0.15);
 }
 
 .class-icon {
-  font-size: 2rem;
+  font-size: 1.6rem;
   color: var(--color-tidal);
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .class-card h3 {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   letter-spacing: 0.1em;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .class-card p {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 25px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-@media (max-width: 768px) {
-  .classes-grid {
-    grid-template-columns: 1fr;
-  }
+.class-card .btn-secondary {
+  padding: 8px 28px;
+  font-size: 0.72rem;
 }
 
 /* Voice Acting */
@@ -710,25 +724,6 @@ a {
   margin-bottom: 30px;
 }
 
-.va-player {
-  margin-bottom: 25px;
-}
-
-.va-player audio {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  display: block;
-}
-
-.va-player-label {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 8px;
-  display: block;
-}
 
 .va-credits {
   display: flex;

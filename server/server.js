@@ -59,7 +59,8 @@ app.get('/api/shows', async (req, res) => {
     const shows = await db.getShows();
     res.json(shows);
   } catch (err) {
-    res.status(500).json({ error: 'Database error' });
+    console.error('GET /api/shows error:', err);
+    res.status(500).json({ error: 'Database error', message: err.message });
   }
 });
 

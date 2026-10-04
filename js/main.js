@@ -134,6 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (targetTab === 'videos') {
                     videoGrid.style.display = 'grid';
                     photoGrid.style.display = 'none';
+                    // Ensure all video previews load their initial frame
+                    videoGrid.querySelectorAll('video.video-preview').forEach(v => {
+                        if (v.readyState === 0) {
+                            v.load();
+                        }
+                    });
                 } else if (targetTab === 'photos') {
                     photoGrid.style.display = 'grid';
                     videoGrid.style.display = 'none';
@@ -194,7 +200,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         galleryVideos.forEach(vidItem => {
+            const previewVid = vidItem.querySelector('video.video-preview');
+
+            // Ensure initial frame displays at 0.5s if paused
+            if (previewVid) {
+                previewVid.addEventListener('loadedmetadata', () => {
+                    if (previewVid.currentTime === 0) {
+                        previewVid.currentTime = 0.5;
+                    }
+                });
+
+                // Desktop hover preview: play silently on mouseenter, pause & reset on mouseleave
+                vidItem.addEventListener('mouseenter', () => {
+                    previewVid.currentTime = 0;
+                    previewVid.play().catch(() => {});
+                });
+
+                vidItem.addEventListener('mouseleave', () => {
+                    previewVid.pause();
+                    previewVid.currentTime = 0.5;
+                });
+            }
+
             vidItem.addEventListener('click', () => {
+                if (previewVid) previewVid.pause();
                 const videoSrc = vidItem.getAttribute('data-video');
                 const title = vidItem.getAttribute('data-title') || '';
                 const venue = vidItem.getAttribute('data-venue') || '';

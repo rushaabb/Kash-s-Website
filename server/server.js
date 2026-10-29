@@ -145,6 +145,11 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Local mock for Vercel Web Analytics script in development
+app.get('/_vercel/insights/script.js', (req, res) => {
+  res.type('application/javascript').send('// Vercel Analytics dev placeholder');
+});
+
 // Admin fallback
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'admin.html'));

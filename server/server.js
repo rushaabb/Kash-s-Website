@@ -116,6 +116,27 @@ app.put('/api/karaoke', authMiddleware, async (req, res) => {
   }
 });
 
+// Upcoming Single API
+app.get('/api/single', async (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  try {
+    const single = await db.getUpcomingSingle();
+    res.json(single);
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+app.put('/api/single', authMiddleware, async (req, res) => {
+  try {
+    const { title, release_date, presave_url, enabled } = req.body;
+    const updated = await db.updateUpcomingSingle({ title, release_date, presave_url, enabled });
+    res.json({ message: 'Upcoming single updated', single: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 // Storage and Connection Status API
 app.get('/api/status', (req, res) => {
   res.json({

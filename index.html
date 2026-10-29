@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Kashmira — Official Site">
+  <meta name="version" content="1.1.0">
   <title>Kashmira — Official Site</title>
   
   <!-- Favicon -->
@@ -66,6 +67,24 @@
             <h2 class="section-title">Releases</h2>
             <div class="section-divider"></div>
           </div>
+
+          <!-- Subtle Upcoming Single Indication with Cover Photo & Countdown Timer -->
+          <div class="upcoming-single-pill fade-in" id="upcoming-single-pill">
+            <div class="upcoming-cover-wrap">
+              <img src="assets/images/albums/upcoming-single.jpg" alt="Upcoming Single Cover Art" class="upcoming-cover-thumb" id="upcoming-single-cover">
+            </div>
+            <span class="upcoming-tag">Upcoming Single</span>
+            <div class="upcoming-countdown" id="upcoming-countdown" data-target="2026-11-15T13:00:00+05:30" title="Releasing November 15 at 1:00 PM">
+              <span class="cd-cell"><strong id="cd-days">--</strong><small>d</small></span>
+              <span class="cd-sep">:</span>
+              <span class="cd-cell"><strong id="cd-hours">--</strong><small>h</small></span>
+              <span class="cd-sep">:</span>
+              <span class="cd-cell"><strong id="cd-mins">--</strong><small>m</small></span>
+              <span class="cd-sep">:</span>
+              <span class="cd-cell"><strong id="cd-secs">--</strong><small>s</small></span>
+            </div>
+          </div>
+
           <div class="releases-counter">
             <span id="releases-current-num">01</span> / <span id="releases-total-num">06</span>
           </div>
@@ -76,7 +95,7 @@
             <!-- Release 1: Now Then (2025) -->
             <div class="album-card horizontal-card">
               <div class="album-cover">
-                <img src="assets/images/albums/now-then.jpg" alt="Now Then" loading="lazy" decoding="async">
+                <img src="assets/images/albums/now-then.jpg" alt="Now Then" decoding="async">
                 <div class="album-overlay">
                   <div class="album-links">
                     <a href="https://open.spotify.com/album/0UpiMNDGuicbU4IR4krz69?si=7tHcFnm0S26jOabmbWprkg&utm_source=copy-link" target="_blank" rel="noopener" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -95,7 +114,7 @@
             <!-- Release 2: What Will Be (2024) -->
             <div class="album-card horizontal-card">
               <div class="album-cover">
-                <img src="assets/images/albums/what-will-be.jpg" alt="What Will Be" loading="lazy" decoding="async">
+                <img src="assets/images/albums/what-will-be.jpg" alt="What Will Be" decoding="async">
                 <div class="album-overlay">
                   <div class="album-links">
                     <a href="https://open.spotify.com/album/4Ec9b1E2OrZRhLKKsgZ8VX?si=FjHP9UZ3QWqbzW4KSbZhcg&utm_source=copy-link" target="_blank" rel="noopener" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -114,7 +133,7 @@
             <!-- Release 3: To be found (2022) -->
             <div class="album-card horizontal-card">
               <div class="album-cover">
-                <img src="assets/images/albums/to-be-found.jpg" alt="To be found" loading="lazy" decoding="async">
+                <img src="assets/images/albums/to-be-found.jpg" alt="To be found" decoding="async">
                 <div class="album-overlay">
                   <div class="album-links">
                     <a href="https://open.spotify.com/album/06SDw9zamkQRP6LuQ0ALoh?si=zYZg5nwRRIub_VYwN17hNA&utm_source=copy-link" target="_blank" rel="noopener" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -133,7 +152,7 @@
             <!-- Release 4: Canvas (2022) -->
             <div class="album-card horizontal-card">
               <div class="album-cover">
-                <img src="assets/images/albums/canvas.jpg" alt="Canvas" loading="lazy" decoding="async">
+                <img src="assets/images/albums/canvas.jpg" alt="Canvas" decoding="async">
                 <div class="album-overlay">
                   <div class="album-links">
                     <a href="https://open.spotify.com/album/4xdchBOJHQp45HG0BghY0p?si=mvOqsK93Qy21BWZEFd-dfA&utm_source=copy-link" target="_blank" rel="noopener" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -152,7 +171,7 @@
             <!-- Release 5: Cut to the chase (2021) -->
             <div class="album-card horizontal-card">
               <div class="album-cover">
-                <img src="assets/images/albums/cut-to-the-chase.jpg" alt="Cut to the chase" loading="lazy" decoding="async">
+                <img src="assets/images/albums/cut-to-the-chase.jpg" alt="Cut to the chase" decoding="async">
                 <div class="album-overlay">
                   <div class="album-links">
                     <a href="https://open.spotify.com/album/7opTSfCzJwPthc7DNvwOgP?si=gBbWVxVMTDqkPz8_6_Z8UQ&utm_source=copy-link" target="_blank" rel="noopener" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -171,7 +190,7 @@
             <!-- Release 6: Break Through (2021) -->
             <div class="album-card horizontal-card">
               <div class="album-cover">
-                <img src="assets/images/albums/break-through.jpg" alt="Break Through" loading="lazy" decoding="async">
+                <img src="assets/images/albums/break-through.jpg" alt="Break Through" decoding="async">
                 <div class="album-overlay">
                   <div class="album-links">
                     <a href="https://open.spotify.com/album/1van6k6mtg0svbTi6XfrlV?si=yv7nF-wGSEm1SVAOzMHTwA&utm_source=copy-link" target="_blank" rel="noopener" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -209,21 +228,63 @@
       <div class="shows-list" id="shows-list">
         <!-- Show 1 -->
         <div class="show-item fade-in">
-          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">15</span></div>
-          <div class="show-info"><h3>The Blue Room</h3><p>Mumbai, India</p></div>
-          <a href="#" class="btn-secondary">Tickets</a>
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">04</span></div>
+          <div class="show-info"><h3>Dorf, Baner (Brunch Duo with Shivangi)</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
         </div>
         <!-- Show 2 -->
         <div class="show-item fade-in">
-          <div class="show-date"><span class="show-month">NOV</span><span class="show-day">02</span></div>
-          <div class="show-info"><h3>Underground Cafe</h3><p>Pune, India</p></div>
-          <a href="#" class="btn-secondary">Tickets</a>
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">07</span></div>
+          <div class="show-info"><h3>Dorf, Baner (Stardust Symphony)</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
         </div>
         <!-- Show 3 -->
         <div class="show-item fade-in">
-          <div class="show-date"><span class="show-month">DEC</span><span class="show-day">12</span></div>
-          <div class="show-info"><h3>Rhythm Festival</h3><p>Goa, India</p></div>
-          <a href="#" class="btn-secondary">Tickets</a>
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">09</span></div>
+          <div class="show-info"><h3>Hippie at Heart (Kothrud)</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 4 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">11</span></div>
+          <div class="show-info"><h3>Effingut, Colaba</h3><p>Mumbai, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 5 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">11</span></div>
+          <div class="show-info"><h3>JW Marriot, Juhu</h3><p>Mumbai, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 6 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">13</span></div>
+          <div class="show-info"><h3>High Note, Bandra</h3><p>Mumbai, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 7 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">14</span></div>
+          <div class="show-info"><h3>Daily All Day</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 8 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">18</span></div>
+          <div class="show-info"><h3>Trooh (Brunch)</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 9 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">25</span></div>
+          <div class="show-info"><h3>Chug (Brunch)</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
+        </div>
+        <!-- Show 10 -->
+        <div class="show-item fade-in">
+          <div class="show-date"><span class="show-month">OCT</span><span class="show-day">28</span></div>
+          <div class="show-info"><h3>High Spirits (The Orange Octopus Records)</h3><p>Pune, India</p></div>
+          <a href="#contact" class="btn-secondary">Tickets</a>
         </div>
       </div>
       
@@ -232,8 +293,8 @@
         <div class="karaoke-icon"><i class="fa-solid fa-microphone-lines"></i></div>
         <div class="karaoke-info">
           <h3 id="karaoke-title">Karaoke Nights</h3>
-          <p id="karaoke-schedule">Every Friday • 8 PM onwards</p>
-          <p class="karaoke-venue" id="karaoke-venue">The Melody Lounge, Mumbai</p>
+          <p id="karaoke-schedule">Every Tuesday • 8 PM onwards</p>
+          <p class="karaoke-venue" id="karaoke-venue">Dorf Brew, Baner</p>
         </div>
         <a href="#contact" class="btn-primary" id="karaoke-btn">Reserve a Spot</a>
       </div>

@@ -9,48 +9,109 @@
   "shows": [
     {
       "id": 1,
-      "date": "2026-10-15",
-      "venue": "The Blue Room",
-      "city": "Mumbai, India",
-      "ticket_url": "#contact",
+      "date": "2026-10-04",
+      "venue": "Dorf, Baner (Brunch Duo with Shivangi)",
+      "city": "Pune, India",
+      "ticket_url": "",
       "type": "show",
       "created_at": "2026-09-30T10:13:01.801Z"
     },
     {
-      "id": 2,
-      "date": "2026-11-02",
-      "venue": "Underground Cafe",
+      "id": 4,
+      "date": "2026-10-07",
+      "venue": "Dorf, Baner (Stardust Symphony)",
       "city": "Pune, India",
-      "ticket_url": "#contact",
+      "ticket_url": "",
       "type": "show",
       "created_at": "2026-09-30T10:13:01.805Z"
+    },
+    {
+      "id": 10,
+      "date": "2026-10-09",
+      "venue": "Hippie at Heart (Kothrud)",
+      "city": "Pune, India",
+      "ticket_url": "",
+      "type": "show",
+      "created_at": "2026-10-02T08:03:49.410Z"
     },
     {
       "id": 3,
-      "date": "2026-12-12",
-      "venue": "Rhythm Festival",
-      "city": "Goa, India",
-      "ticket_url": "#contact",
+      "date": "2026-10-11",
+      "venue": "Effingut, Colaba",
+      "city": "Mumbai, India",
+      "ticket_url": "",
       "type": "show",
       "created_at": "2026-09-30T10:13:01.805Z"
     },
     {
-      "id": 4,
-      "date": "2026-10-23",
-      "venue": "The Melody Lounge",
+      "id": 2,
+      "date": "2026-10-11",
+      "venue": "JW Marriot, Juhu",
       "city": "Mumbai, India",
-      "ticket_url": "#contact",
-      "type": "karaoke",
+      "ticket_url": "",
+      "type": "show",
       "created_at": "2026-09-30T10:13:01.805Z"
+    },
+    {
+      "id": 5,
+      "date": "2026-10-13",
+      "venue": "High Note, Bandra",
+      "city": "Mumbai, India",
+      "ticket_url": "",
+      "type": "show",
+      "created_at": "2026-10-02T08:01:02.905Z"
+    },
+    {
+      "id": 6,
+      "date": "2026-10-14",
+      "venue": "Daily All Day",
+      "city": "Pune, India",
+      "ticket_url": "",
+      "type": "show",
+      "created_at": "2026-10-02T08:01:21.210Z"
+    },
+    {
+      "id": 7,
+      "date": "2026-10-18",
+      "venue": "Trooh (Brunch)",
+      "city": "Pune, India",
+      "ticket_url": "",
+      "type": "show",
+      "created_at": "2026-10-02T08:02:10.923Z"
+    },
+    {
+      "id": 8,
+      "date": "2026-10-25",
+      "venue": "Chug (Brunch)",
+      "city": "Pune, India",
+      "ticket_url": "",
+      "type": "show",
+      "created_at": "2026-10-02T08:02:33.041Z"
+    },
+    {
+      "id": 9,
+      "date": "2026-10-28",
+      "venue": "High Spirits (The Orange Octopus Records)",
+      "city": "Pune, India",
+      "ticket_url": "",
+      "type": "show",
+      "created_at": "2026-10-02T08:03:22.893Z"
     }
   ],
   "karaoke": {
     "title": "Karaoke Nights",
-    "schedule": "Every Friday • 8 PM onwards",
-    "venue": "The Melody Lounge, Mumbai",
+    "schedule": "Every Tuesday • 8 PM onwards",
+    "venue": "Dorf Brew, Baner",
     "btn_text": "Reserve a Spot",
     "btn_link": "#contact",
     "enabled": true
   },
-  "nextShowId": 5
+  "upcoming_single": {
+    "title": "Title TBA",
+    "cover_image": "assets/images/albums/upcoming-single.jpg",
+    "release_date": "2026-11-15T13:00:00+05:30",
+    "presave_url": "#contact",
+    "enabled": true
+  },
+  "nextShowId": 11
 }

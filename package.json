@@ -1,6 +1,6 @@
 {
   "name": "kashmirakhot-website",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Kashmira Official Website and Admin Backend",
   "main": "server/server.js",
   "scripts": {

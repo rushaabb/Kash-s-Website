@@ -349,6 +349,33 @@ const db = {
     await saveData(data);
     return data.karaoke;
   },
+  async getUpcomingSingle() {
+    const data = await loadData();
+    if (!data || !data.upcoming_single) {
+      return loadLocalData().upcoming_single || {
+        title: 'Title TBA',
+        cover_image: 'assets/images/albums/upcoming-single.jpg',
+        release_date: '2026-11-15T13:00:00+05:30',
+        presave_url: '#contact',
+        enabled: true
+      };
+    }
+    return data.upcoming_single;
+  },
+  async updateUpcomingSingle(updates) {
+    const data = await loadData();
+    if (!data.upcoming_single) {
+      data.upcoming_single = {};
+    }
+    if (updates.title !== undefined) data.upcoming_single.title = updates.title;
+    if (updates.cover_image !== undefined) data.upcoming_single.cover_image = updates.cover_image;
+    if (updates.release_date !== undefined) data.upcoming_single.release_date = updates.release_date;
+    if (updates.presave_url !== undefined) data.upcoming_single.presave_url = updates.presave_url;
+    if (updates.enabled !== undefined) data.upcoming_single.enabled = Boolean(updates.enabled);
+
+    await saveData(data);
+    return data.upcoming_single;
+  },
   // Synchronous fallback adapter for existing code
   prepare(sql) {
     const normalized = sql.trim().toUpperCase();

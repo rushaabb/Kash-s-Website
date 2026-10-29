@@ -1,11 +1,7 @@
 /* Custom Font: II Increments Sans */
 @font-face {
   font-family: 'II Increments Sans';
-  src: local('II Increments Sans'), local('II-Increments-Sans'), local('II Increments'), local('Increments Sans'),
-       url('../assets/fonts/II-Increments-Sans.woff2') format('woff2'),
-       url('../assets/fonts/II-Increments-Sans.woff') format('woff'),
-       url('../assets/fonts/II-Increments-Sans.ttf') format('truetype'),
-       url('../assets/fonts/II-Increments-Sans.otf') format('opentype');
+  src: local('II Increments Sans'), local('II-Increments-Sans'), local('II Increments'), local('Increments Sans');
   font-weight: 300 800;
   font-display: swap;
 }
@@ -315,7 +311,7 @@ a {
 /* Releases Section — Pinned Horizontal Track */
 .releases-horizontal-wrapper {
   position: relative;
-  height: 480vh; /* Smooth scrollable distance for 6 releases */
+  height: 220vh; /* Smooth and responsive: 2.2 viewport heights glides naturally without trapping users */
   background: linear-gradient(180deg, var(--section-alt-bg) 0%, #17000d 50%, var(--primary-bg) 100%);
 }
 
@@ -335,11 +331,12 @@ a {
 .releases-header-bar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   padding: 0 8vw;
   width: 100%;
   box-sizing: border-box;
   z-index: 5;
+  gap: 20px;
 }
 
 .releases-header-bar .section-header {
@@ -349,6 +346,90 @@ a {
 
 .releases-header-bar .section-divider {
   margin: 0;
+}
+
+/* Subtle Upcoming Single Indication */
+.upcoming-single-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(95, 0, 50, 0.4);
+  border: 1px solid rgba(234, 162, 229, 0.35);
+  padding: 5px 14px 5px 6px;
+  border-radius: 30px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.upcoming-single-pill:hover {
+  border-color: rgba(234, 162, 229, 0.6);
+  box-shadow: 0 6px 22px rgba(234, 162, 229, 0.2);
+  transform: translateY(-1px);
+}
+
+.upcoming-cover-wrap {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upcoming-cover-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(234, 162, 229, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+}
+
+.upcoming-single-pill:hover .upcoming-cover-thumb {
+  transform: scale(1.08);
+}
+
+.upcoming-tag {
+  font-family: var(--font-heading);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--color-lavender-rose);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.upcoming-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--color-tidal);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(232, 249, 162, 0.25);
+  letter-spacing: 0.04em;
+}
+
+.cd-cell strong {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cd-cell small {
+  font-size: 0.62rem;
+  color: var(--text-secondary);
+  margin-left: 1px;
+}
+
+.cd-sep {
+  opacity: 0.45;
+  margin: 0 1px;
 }
 
 .releases-counter {
@@ -515,10 +596,25 @@ a {
 
 @media (max-width: 768px) {
   .releases-horizontal-wrapper {
-    height: 320vh;
+    height: 180vh;
   }
   .releases-sticky {
     padding: 30px 0;
+  }
+  .releases-header-bar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .upcoming-single-pill {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 6px 12px;
+    gap: 8px;
+  }
+  .upcoming-details {
+    font-size: 0.78rem;
   }
   .releases-header-bar,
   .releases-footer-bar,
@@ -1316,4 +1412,33 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-tidal);
+}
+
+/* Site Version Badges */
+.footer-version {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-family: var(--font-heading);
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 500;
+}
+
+.version-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  background: rgba(234, 162, 229, 0.18);
+  color: var(--color-lavender-rose);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  border: 1px solid rgba(234, 162, 229, 0.3);
+  font-weight: 500;
+  vertical-align: middle;
 }

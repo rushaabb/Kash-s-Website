@@ -107,11 +107,11 @@
     "enabled": true
   },
   "upcoming_single": {
-    "title": "Title TBA",
-    "cover_image": "assets/images/albums/upcoming-single.jpg",
+    "title": "Breathe",
+    "cover_image": "assets/images/albums/breathe.jpg",
     "release_date": "2026-11-15T13:00:00+05:30",
     "presave_url": "#contact",
-    "enabled": true
+    "enabled": false
   },
   "nextShowId": 11
 }
